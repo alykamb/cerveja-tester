@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core'
-import { concat, concatMap, generate, lastValueFrom, merge } from 'rxjs'
+import { concat, concatMap, lastValueFrom } from 'rxjs'
 
 import { AppModule } from './app.module'
 // import { AppService } from './app.service'
@@ -19,30 +19,18 @@ async function bootstrap(): Promise<void> {
 
     await lastValueFrom(
         concat(
-            generate(
-                0,
-                (x) => x < 20,
-                (x) => x + 1,
-                () => generatorService.createCervejaria(),
-            ).pipe(concatMap((c) => testingService.createCervejaria(c))),
-            generate(
-                0,
-                (x) => x < 50,
-                (x) => x + 1,
-                () => generatorService.createCerveja(),
-            ).pipe(concatMap((c) => testingService.createCerveja(c))),
-            generate(
-                0,
-                (x) => x < 20,
-                (x) => x + 1,
-                () => generatorService.createCozinha(),
-            ).pipe(concatMap((c) => testingService.createCozinha(c))),
-
-            generate(
-                0,
-                (x) => x < 30,
-                (x) => x + 1,
-            ).pipe(concatMap(() => testingService.adicionarCozinhaACerveja())),
+            generatorService
+                .generateValues(20, () => generatorService.createCervejaria())
+                .pipe(concatMap((c) => testingService.createCervejaria(c))),
+            generatorService
+                .generateValues(50, () => generatorService.createCerveja())
+                .pipe(concatMap((c) => testingService.createCerveja(c))),
+            generatorService
+                .generateValues(20, () => generatorService.createCozinha())
+                .pipe(concatMap((c) => testingService.createCozinha(c))),
+            generatorService
+                .generateValues(30, (n) => n)
+                .pipe(concatMap(() => testingService.adicionarCozinhaACerveja())),
         ),
     )
 

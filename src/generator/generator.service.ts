@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import * as faker from 'faker'
 import * as fakerDe from 'faker/locale/de'
 import { fake } from 'faker/locale/zh_TW'
+import { generate, Observable } from 'rxjs'
 
 import { CervejariaDto } from '../dtos/cervejaria.dto'
 import { CozinhaDto } from '../dtos/cozinha.dto'
@@ -10,6 +11,15 @@ import { FOODS } from './food.constants'
 @Injectable()
 export class GeneratorService {
     private types = ['Golden Ale', 'Stout', 'Dunkel', 'Ipa', 'Pale Ale', 'Lager', 'Weizen']
+
+    public generateValues(n: number, cb: (n: number) => any): Observable<any>{
+        return generate(
+            0,
+            (x) => x < n,
+            (x) => x + 1,
+            cb,
+        )
+    }
 
     private cepGenerator = this.getCep()
     public createCerveja(): string {
