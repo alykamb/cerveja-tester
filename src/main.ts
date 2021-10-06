@@ -9,13 +9,10 @@ import { TestingService } from './testing/testing.service'
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.createApplicationContext(AppModule)
     await app.init()
-    // const appService = app.get(AppService)
 
     const generatorService = app.get(GeneratorService)
     const testingService = app.get(TestingService)
     console.clear()
-
-    // await testingService.createCervejaria(generatorService.createCervejaria())
 
     await lastValueFrom(
         concat(
